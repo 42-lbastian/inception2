@@ -10,7 +10,7 @@ The goal of this project is to write docker images from scratch and link them to
 
 You will need to set new volume path in docker-compose.yaml for wordpress and the database. You can set the same path in the makefile for the rule fclean.
 
-You will also need a .env file with the variable:
+You will also need a .env (in the same location as docker-compose.yaml) file with the variable:
 
 ```
 WEBSITE_NAME=
