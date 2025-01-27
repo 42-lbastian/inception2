@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+     - "443:443"
+    volumes:
+     - wordpress:/var/www/html
+#     - wordpress:/home/lbastian/data
+    restart: unless-stopped
+    networks:
+     - inception_network
+    depends_on:
+     - wordpress
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    volumes:
+     - wordpress:/var/www/html
+#     - wordpress:/home/lbastian/data
+    restart: unless-stopped
+    environment:
+     - ADMIN_NAME=${ADMIN_NAME}
+     - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+     - ADMIN_EMAIL=${ADMIN_EMAIL}
+     - USER_NAME=${USER_NAME}
+     - USER_PASSWORD=${USER_PASSWORD}
+     - USER_EMAIL=${USER_EMAIL}
+     - DATABASE_NAME=${DATABASE_NAME}
+     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+     - MYSQL_USER=${MYSQL_USER}
+     - WEBSITE_NAME=${WEBSITE_NAME}
+    networks:
+     - inception_network
+    depends_on:
+     - mariadb
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+     - mariadb:/var/lib/mysql
+#     - mariadb:/home
+    restart: unless-stopped
+    environment:
+     - DATABASE_NAME=${DATABASE_NAME}
+     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+     - MYSQL_USER=${MYSQL_USER}
+     - MYSQL_PASSWORD=${MYSQL_PASSWORD} 
+    networks:
+     - inception_network
+
+networks:
+  inception_network:
+    driver: bridge
+
+#volumes:
+#  wordpress:
+
+volumes:
+  wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/lbastian/data/wordpress'
+  mariadb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/lbastian/data/mariadb'
